@@ -3,6 +3,7 @@ const express = require("express");
 var bodyParser = require("body-parser");
 
 const BooksRoutes = require("./routes/books");
+const UserRoutes = require("./routes/user");
 const mysqlConnection = require("./connection");
 const cors = require("cors");
 
@@ -11,39 +12,44 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(cors());
 
-
 app.use("/api/books", BooksRoutes);
+app.use("/api/user", UserRoutes);
 
-app.post("/api/register", (req, res) => {
-    const username = req.body.username;
-    const password = req.body.password;
-  mysqlConnection.query(
-    "INSERT INTO users (username,password) VALUES (?,?)",
-    [username, password],
-    (err, result) => {
-      if (err){
-        console.log(err);
-      }
-      else{
-        res.send("successfully registered")
-      }
-    }
-  );
-});
-
-// app.post(
-//   "/login",
-//   strategy.authenticate("local", { session: true }),
-//   (req, res) => {
-//     console.log(req.user);
-//     if (req.user != undefined || req.user != null) {
-//       res.send(req.user);
-//     } else {
-//       res.send(
-//         "not able to generate the token.username or password incorrect."
-//       );
+// app.post("/api/register", (req, res) => {
+//   const username = req.body.username;
+//   const password = req.body.password;
+//   mysqlConnection.query(
+//     "INSERT INTO users (username,password) VALUES (?,?)",
+//     [username, password],
+//     (err, result) => {
+//       if (err) {
+//         res.send({err : err})
+//       } else {
+//         res.send("Successfully Registered");
+//       }
 //     }
-//   }
-// );
+//   );
+// });
 
-app.listen(3000);
+// app.post("/api/login", (req, res) => {
+//   const username = req.body.username;
+//   const password = req.body.password;
+//   mysqlConnection.query(
+//     "SELECT * FROM users WHERE username = ? AND password = ?",
+//     [username, password],
+//     (err, result) => {
+//       if (err) {
+//         res.send({err : err})
+//       } 
+//       if (result.length >0){
+//         res.send(result);
+//       }
+//       else{
+//         res.send({message: "Wrong username/password combination!!"})
+//       }
+//     }
+//   );
+// });
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, console.log("started server"));
