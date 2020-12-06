@@ -1,0 +1,17 @@
+
+--usertable
+CREATE TABLE users(
+ username VARCHAR(200) primary key,
+ password VARCHAR(200) NOT NULL
+);
+--bookstable
+CREATE TABLE books(
+ books_id INT Not NULL AUTO_INCREMENT,
+ book_name VARCHAR(200) NOT NULL,
+ book_author VARCHAR(200) NOT NULL,
+ username VARCHAR(200) NOT NULL,
+ FOREIGN KEY (username) REFERENCES users(username),
+ PRIMARY KEY (books_id)
+);
+
+insert into books(book_name,book_author,username) Values ('1stbook','1stauthor','JowettC');
