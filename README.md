@@ -1,5 +1,6 @@
 # BooksRead-backend
-developed with expressJs and mysql\
-Simple web application that allow users to keep track of books read
+Developed with expressJs and mysql\
+# Features
+Simple web application that **allow users to keep track of books read**
 
 
