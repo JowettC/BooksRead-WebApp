@@ -1,8 +1,11 @@
 const express = require('express')
 const Router = express.Router();
 const mysqlConnection = require("../connection")
+require('dotenv').config()
 
-Router.get("/", (req,res)=>{
+const auth = require("../auth/auth")
+
+Router.get("/", auth.authenticateToken ,(req,res)=>{
     mysqlConnection.query("SELECT * from books", (err,rows,fields)=>{
         if(!err)
         {

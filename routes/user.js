@@ -1,5 +1,11 @@
+// to fetch .env variables
+require('dotenv').config()
+
+const auth = require("../auth/auth")
 const express = require("express");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken")
+
 // const passport = require('passport');
 // const passportJWT = require('passport-jwt');
 // const JWTStrategy = passportJWT.Strategy;
@@ -7,6 +13,8 @@ const bcrypt = require("bcrypt");
 // const User = require('../models/user')
 const Router = express.Router();
 const mysqlConnection = require("../connection");
+
+Router.use(express.json());
 
 // passport.use(new JWTStrategy({
 //     jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
@@ -24,6 +32,8 @@ Router.post("/register", async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     const username = req.body.username;
+    const user = {name:username}
+    jwt.sign(user,process.env.ACCESS_TOKEN_SECRET)
     mysqlConnection.query(
       "INSERT INTO users (username,password) VALUES (?,?)",
       [username, hashedPassword],
@@ -58,6 +68,9 @@ Router.post("/register", async (req, res) => {
 Router.post("/login", (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
+  const user = {name:username}
+  const accessToken = jwt.sign(user,process.env.ACCESS_TOKEN_SECRET)
+  console.log(accessToken)
   mysqlConnection.query(
     "SELECT * FROM users WHERE username = ? AND password = ?",
     [username, password],
@@ -73,4 +86,6 @@ Router.post("/login", (req, res) => {
     }
   );
 });
+
+
 module.exports = Router;
