@@ -32,5 +32,31 @@ Router.post("/create", auth.authenticateToken, (req, res) => {
     }
   );
 });
+Router.delete("/:id", auth.authenticateToken, (req, res) => {
+  mysqlConnection.query(
+    "delete from books where books_id =?",
+    [req.params.id],
+    (err, rows, fields) => {
+      if (!err) {
+        res.send({rows,message:"Successfully Deleted :("});
+      } else {
+        console.log(err);
+      }
+    }
+  );
+});
+Router.put("/:id", auth.authenticateToken, (req, res) => {
+  mysqlConnection.query(
+    "UPDATE books SET book_name = ?, book_author = ? WHERE books_id = ?;",
+    [req.body.bookName,req.body.bookName,req.params.id],
+    (err, rows, fields) => {
+      if (!err) {
+        res.send({rows,message:"Successfully Updated!"});
+      } else {
+        console.log(err);
+      }
+    }
+  );
+});
 
 module.exports = Router;
