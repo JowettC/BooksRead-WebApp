@@ -22,7 +22,7 @@ Router.get("/", auth.authenticateToken, (req, res) => {
 Router.post("/create", auth.authenticateToken, (req, res) => {
   mysqlConnection.query(
     "insert into books(book_name,book_author,username) values (?,?,?)",
-    [req.body.bookName,req.body.bookName,req.user.name],
+    [req.body.bookName,req.body.bookAuthor,req.user.name],
     (err, rows, fields) => {
       if (!err) {
         res.send({rows,message:"Successfully Added! Keep Reading!"});
@@ -48,7 +48,7 @@ Router.delete("/:id", auth.authenticateToken, (req, res) => {
 Router.put("/:id", auth.authenticateToken, (req, res) => {
   mysqlConnection.query(
     "UPDATE books SET book_name = ?, book_author = ? WHERE books_id = ?;",
-    [req.body.bookName,req.body.bookName,req.params.id],
+    [req.body.bookName,req.body.bookAuthor,req.params.id],
     (err, rows, fields) => {
       if (!err) {
         res.send({rows,message:"Successfully Updated!"});
