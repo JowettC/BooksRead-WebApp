@@ -1,10 +1,10 @@
 // to fetch .env variables
-require('dotenv').config()
+require("dotenv").config();
 
-const auth = require("../auth/auth")
+const auth = require("../auth/auth");
 const express = require("express");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
 
 // const passport = require('passport');
 // const passportJWT = require('passport-jwt');
@@ -32,8 +32,8 @@ Router.post("/register", async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     const username = req.body.username;
-    const user = {name:username}
-    const accessToken = jwt.sign(user,process.env.ACCESS_TOKEN_SECRET)
+    const user = { name: username };
+    const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
     mysqlConnection.query(
       "INSERT INTO users (username,password) VALUES (?,?)",
       [username, hashedPassword],
@@ -41,12 +41,13 @@ Router.post("/register", async (req, res) => {
         if (err) {
           res.send({ err: err });
         } else {
-          res.send({message:"Successfully Registered", token:accessToken});
+          console.log(req.body.password);
+          res.send({ message: "Successfully Registered", token: accessToken });
         }
       }
     );
   } catch {
-    res.send("Something went wrong")
+    res.send("Something went wrong");
   }
 });
 // Router.post("/register", (req, res) => {
@@ -65,20 +66,24 @@ Router.post("/register", async (req, res) => {
 //     );
 //   });
 
-Router.post("/login", (req, res) => {
+Router.post("/login", async (req, res) => {
   const username = req.body.username;
-  const password = req.body.password;
-  const user = {name:username}
-  const accessToken = jwt.sign(user,process.env.ACCESS_TOKEN_SECRET)
-  console.log(accessToken)
+  const user = { name: username };
+  // console.log(req.body.password)
+  // const hashedPassword = await bcrypt.hash(req.body.password, 10);
+  // console.log(hashedPassword)
+
+  const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
   mysqlConnection.query(
-    "SELECT * FROM users WHERE username = ? AND password = ?",
-    [username, password],
+    "SELECT password FROM users WHERE username = ?",
+    [username],
     (err, result) => {
       if (err) {
         res.send({ err: err });
       }
       if (result.length > 0) {
+        console.log(result[0].password);
+        // const verified = bcrypt.compareSync(req.body.password, hashedPassword);
         res.send({ status: "Success", message: "Successfully Login" });
       } else {
         res.send({ message: "Wrong username/password combination!!" });
@@ -86,6 +91,5 @@ Router.post("/login", (req, res) => {
     }
   );
 });
-
 
 module.exports = Router;
