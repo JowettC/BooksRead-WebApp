@@ -5,6 +5,7 @@ const auth = require("../auth/auth");
 const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const crypto = require('./cryptoFunction.js');
 
 // const passport = require('passport');
 // const passportJWT = require('passport-jwt');
@@ -34,6 +35,7 @@ Router.post("/register", async (req, res) => {
     const username = req.body.username;
     const user = { name: username };
     const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+    console.log('test')
     mysqlConnection.query(
       "INSERT INTO users (username,password) VALUES (?,?)",
       [username, hashedPassword],
@@ -67,29 +69,40 @@ Router.post("/register", async (req, res) => {
 //   });
 
 Router.post("/login", async (req, res) => {
-  const username = req.body.username;
-  const user = { name: username };
-  // console.log(req.body.password)
-  // const hashedPassword = await bcrypt.hash(req.body.password, 10);
-  // console.log(hashedPassword)
-
-  const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
   mysqlConnection.query(
-    "SELECT password FROM users WHERE username = ?",
-    [username],
-    (err, result) => {
+    "SELECT * FROM users WHERE username = ?",
+    [req.body.username],
+    async (err, result) => {
       if (err) {
         res.send({ err: err });
       }
       if (result.length > 0) {
-        console.log(result[0].password);
-        // const verified = bcrypt.compareSync(req.body.password, hashedPassword);
-        res.send({ status: "Success", message: "Successfully Login" });
+        const user = result[0].password
+        console.log(user)
+        try{
+          const result = await bcrypt.compare(req.body.password, user)
+          if (result){
+            const username = req.body.username
+            const user = { name: username };
+            const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+            res.send({ status: "Success", message: "Successfully Login", accessToken:accessToken });
+          }
+          else{
+            res.send({ status: "Error", message: "Inccorrect Password" });
+          }
+
+        }catch{
+          res.status(500).send("Something went wrong")
+        }
+        
       } else {
         res.send({ message: "Wrong username/password combination!!" });
       }
     }
   );
+    
+
+  
 });
 
 module.exports = Router;
