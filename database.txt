@@ -10,6 +10,7 @@ CREATE TABLE books(
  book_name VARCHAR(200) NOT NULL,
  book_author VARCHAR(200) NOT NULL,
  username VARCHAR(200) NOT NULL,
+ created date NOT null,
  FOREIGN KEY (username) REFERENCES users(username),
  PRIMARY KEY (books_id)
 );
