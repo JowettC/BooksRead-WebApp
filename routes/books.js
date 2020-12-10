@@ -59,10 +59,10 @@ Router.delete("/:id", auth.authenticateToken, (req, res) => {
     }
   );
 });
-Router.put("/:id", auth.authenticateToken, (req, res) => {
+Router.put("/edit", auth.authenticateToken, (req, res) => {
   mysqlConnection.query(
     "UPDATE books SET book_name = ?, book_author = ? WHERE books_id = ?;",
-    [req.body.bookName,req.body.bookAuthor,req.params.id],
+    [req.body.bookName,req.body.bookAuthor,req.body.books_id],
     (err, rows, fields) => {
       if (!err) {
         res.send({rows,message:"Successfully Updated!"});
