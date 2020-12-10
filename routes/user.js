@@ -31,10 +31,12 @@ Router.use(express.json());
 
 Router.post("/register", async (req, res) => {
   try {
+    // console.log(req.body.password)
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     const username = req.body.username;
     const user = { name: username };
     const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+    
     mysqlConnection.query(
       "INSERT INTO users (username,password) VALUES (?,?)",
       [username, hashedPassword],
