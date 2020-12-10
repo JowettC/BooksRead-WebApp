@@ -19,6 +19,19 @@ Router.get("/", auth.authenticateToken, (req, res) => {
     }
   );
 });
+Router.get("/:id", auth.authenticateToken, (req, res) => {
+  mysqlConnection.query(
+    'SELECT books_id,book_name,book_author, DATE_FORMAT(created,"%M %d %Y") as "date_created" from books,users where books.username = users.username and users.username = ? and books_id = ?',
+    [req.user.name,req.params.id],
+    (err, rows, fields) => {
+      if (!err) {
+        res.send(rows);
+      } else {
+        console.log(err);
+      }
+    }
+  );
+});
 Router.post("/create", auth.authenticateToken, (req, res) => {
   const created = new Date().toISOString().substring(0, 10);
   mysqlConnection.query(
