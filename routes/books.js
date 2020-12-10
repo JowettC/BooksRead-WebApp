@@ -42,6 +42,7 @@ Router.post("/create", auth.authenticateToken, (req, res) => {
         res.send({rows,message:"Successfully Added! Keep Reading!"});
       } else {
         console.log(err);
+        res.send(err)
       }
     }
   );
@@ -59,7 +60,7 @@ Router.delete("/:id", auth.authenticateToken, (req, res) => {
     }
   );
 });
-Router.put("/edit", auth.authenticateToken, (req, res) => {
+Router.post("/edit", auth.authenticateToken, (req, res) => {
   mysqlConnection.query(
     "UPDATE books SET book_name = ?, book_author = ? WHERE books_id = ?;",
     [req.body.bookName,req.body.bookAuthor,req.body.books_id],
