@@ -35,7 +35,6 @@ Router.post("/register", async (req, res) => {
     const username = req.body.username;
     const user = { name: username };
     const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
-    console.log('test')
     mysqlConnection.query(
       "INSERT INTO users (username,password) VALUES (?,?)",
       [username, hashedPassword],
@@ -43,7 +42,6 @@ Router.post("/register", async (req, res) => {
         if (err) {
           res.send({ err: err });
         } else {
-          console.log(req.body.password);
           res.send({ message: "Successfully Registered", token: accessToken });
         }
       }
@@ -78,7 +76,6 @@ Router.post("/login", async (req, res) => {
       }
       if (result.length > 0) {
         const user = result[0].password
-        console.log(user)
         try{
           const result = await bcrypt.compare(req.body.password, user)
           if (result){
