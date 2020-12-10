@@ -8,7 +8,7 @@ const { reset } = require("nodemon");
 
 Router.get("/", auth.authenticateToken, (req, res) => {
   mysqlConnection.query(
-    "SELECT books_id,book_name,book_author from books,users where books.username = users.username and users.username = ?",
+    'SELECT books_id,book_name,book_author, DATE_FORMAT(created,"%M %d %Y") as "date_created" from books,users where books.username = users.username and users.username = ?',
     [req.user.name],
     (err, rows, fields) => {
       if (!err) {
@@ -20,9 +20,10 @@ Router.get("/", auth.authenticateToken, (req, res) => {
   );
 });
 Router.post("/create", auth.authenticateToken, (req, res) => {
+  const created = new Date().toISOString().substring(0, 10);
   mysqlConnection.query(
-    "insert into books(book_name,book_author,username) values (?,?,?)",
-    [req.body.bookName,req.body.bookAuthor,req.user.name],
+    "insert into books(book_name,book_author,username,created) values (?,?,?,?)",
+    [req.body.bookName,req.body.bookAuthor,req.user.name,created],
     (err, rows, fields) => {
       if (!err) {
         res.send({rows,message:"Successfully Added! Keep Reading!"});
