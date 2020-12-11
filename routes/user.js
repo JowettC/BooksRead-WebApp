@@ -42,7 +42,11 @@ Router.post("/register", async (req, res) => {
       [username, hashedPassword],
       (err, result) => {
         if (err) {
-          res.send({ err: err });
+          console.log(err)
+          // if (err.error.code ==="ER_DUP_ENTRY"){
+          //   res.send({error : "Username already exist"})
+          // }
+          res.send({ error: err });
         } else {
           res.send({ message: "Successfully Registered", token: accessToken });
         }
