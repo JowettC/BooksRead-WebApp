@@ -19,6 +19,32 @@ Router.get("/", auth.authenticateToken, (req, res) => {
     }
   );
 });
+Router.get("/monthly", auth.authenticateToken, (req, res) => {
+  mysqlConnection.query(
+    'select count(*) as "books_read", year(created) as "year", month(created) as "month" from books where username = ? group by year(created) desc, month(created) desc',
+    [req.user.name],
+    (err, rows, fields) => {
+      if (!err) {
+        res.send(rows);
+      } else {
+        console.log(err);
+      }
+    }
+  );
+});
+Router.get("/yearly", auth.authenticateToken, (req, res) => {
+  mysqlConnection.query(
+    'select count(*) as "books_read", year(created) as "year" from books where username = ? group by year(created) desc',
+    [req.user.name],
+    (err, rows, fields) => {
+      if (!err) {
+        res.send(rows);
+      } else {
+        console.log(err);
+      }
+    }
+  );
+});
 Router.get("/:id", auth.authenticateToken, (req, res) => {
   mysqlConnection.query(
     'SELECT books_id,book_name,book_author, DATE_FORMAT(created,"%M %d %Y") as "date_created" from books,users where books.username = users.username and users.username = ? and books_id = ?',
