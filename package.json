@@ -29,7 +29,7 @@
     "mysql": "^2.18.1",
     "sequelize": "^6.3.5"
   },
-  "engines":{
+  "engines": {
     "node": "14.14.0"
   },
   "devDependencies": {
